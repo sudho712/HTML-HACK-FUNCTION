@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Snapshot with Gallery</title>
+  <style>
+    #video, #canvas {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 10px;
+    }
+    #gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .gallery-item {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Take a Snapshot</h1>
+  <video id="video" autoplay playsinline></video>
+  <button id="captureButton">Capture Photo</button>
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <h2>Gallery</h2>
+  <div id="gallery"></div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('captureButton');
+    const gallery = document.getElementById('gallery');
+    const ctx = canvas.getContext('2d');
+
+    // Start the camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch((error) => {
+        console.error('Error accessing the camera:', error);
+      });
+
+    // Capture photo on button click
+    captureButton.addEventListener('click', () => {
+      // Set canvas dimensions
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // Draw the current frame of the video on the canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Create an image element for the snapshot
+      const img = document.createElement('img');
+      img.src = canvas.toDataURL('image/png'); // Convert canvas content to a data URL
+      img.className = 'gallery-item'; // Apply CSS class for styling
+
+      // Add the image to the gallery
+      gallery.appendChild(img);
+    });
+  </script>
+</body>
+</html>
