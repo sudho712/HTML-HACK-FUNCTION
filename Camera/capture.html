@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Snapshot</title>
+  <style>
+    #video, #canvas {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Take a Snapshot</h1>
+  <video id="video" autoplay playsinline></video>
+  <button id="captureButton">Capture Photo</button>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('captureButton');
+    const ctx = canvas.getContext('2d');
+
+    // Start the camera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch((error) => {
+        console.error('Error accessing the camera:', error);
+      });
+
+    // Capture photo on button click
+    captureButton.addEventListener('click', () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    });
+  </script>
+</body>
+</html>
